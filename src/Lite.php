@@ -1,5 +1,5 @@
 <?php
-namespace PhalApi\Redis;
+namespace xuepengdong\phalapiredis;
 
 use \PhalApi\Cache\RedisCache;
 /**

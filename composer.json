@@ -1,28 +1,12 @@
 {
-  "name": "xuepengdong/phalapiredis",
-  "description": "PhalApi 2.x 扩展类库 - Redis 丰富基础redisCache类功能,更贴切复杂场景下的redis使用。",
-  "keywords": [
-    "phalapi",
-    "redis",
-    "phalapiredis"
-  ],
-  "license": "GPL-3.0-or-later",
-  "homepage": "https://www.phalapi.net/",
-  "type": "library",
-  "authors": [
-    {
-      "name": "xuepengdong",
-      "email": "260288701@qq.com",
-      "homepage": "https://blog.csdn.net/xiaoyangxiaodong",
-      "role": "Developer"
-    }
-  ],
-  "require": {
-    "php": ">=5.3.3"
-  },
-  "autoload": {
-    "psr-4": {
-      "xuepengdong\\phalApiredis\\": "src/"
-    }
-  }
+    "name": "xuepengdong/phalapiredis",
+    "description": "PhalApi 2.x 扩展类库 - Redis 丰富基础redisCache类功能,更贴切复杂场景下的redis使用。",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "dongxuepeng",
+            "email": "260288701@qq.com"
+        }
+    ],
+    "require": {}
 }
