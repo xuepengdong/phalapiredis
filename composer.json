@@ -1,19 +1,19 @@
 {
-  "name": "phalapi/redis",
+  "name": "phalapi/redis2",
   "description": "PhalApi 2.x 扩展类库 - Redis 丰富基础redisCache类功能,更贴切复杂场景下的redis使用。",
   "keywords": [
     "phalapi",
     "redis",
-    "phalapi-redis"
+    "phalapi-redis2"
   ],
   "license": "GPL-3.0-or-later",
   "homepage": "https://www.phalapi.net/",
   "type": "library",
   "authors": [
     {
-      "name": "喵了个咪",
-      "email": "wenzhenxi@vip.qq.com",
-      "homepage": "http://w-blog.cn",
+      "name": "xuepengdong",
+      "email": "260288701@qq.com",
+      "homepage": "https://blog.csdn.net/xiaoyangxiaodong",
       "role": "Developer"
     }
   ],
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "PhalApi\\Redis\\": "src/"
+      "PhalApi\\Redis2\\": "src/"
     }
   }
 }
