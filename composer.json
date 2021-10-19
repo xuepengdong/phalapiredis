@@ -1,5 +1,5 @@
 {
-  "name": "xuepengdong/phalapi/redis2",
+  "name": "xuepengdong/phalapiRedis2",
   "description": "PhalApi 2.x 扩展类库 - Redis 丰富基础redisCache类功能,更贴切复杂场景下的redis使用。",
   "keywords": [
     "phalapi",
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Xuepengdong\\PhalApi\\Redis2\\": "src/"
+      "Xuepengdong\\PhalApiRedis2\\": "src/"
     }
   }
 }
