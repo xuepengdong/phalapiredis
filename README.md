@@ -57,13 +57,12 @@ $di->redis = function () {
 
 ## 5、入门使用
 
-具体API可以参考vendor\xuepengdong\phalapiredis\src\Lite.php
-
 + **永久键值队**
 
   ```
   // 存入永久的键值队
   \PhalApi\DI()->redis->set_forever(键名,值,库名);
+  
   // 获取永久的键值队
   \PhalApi\DI()->redis->get_forever(键名, 库名);
   ```
@@ -73,19 +72,58 @@ $di->redis = function () {
   ```
   // 存入一个有时效性的键值队,默认600秒
   \PhalApi\DI()->redis->set_Time(键名,值,有效时间,库名);
+  
   // 获取一个有时效性的键值队
   \PhalApi\DI()->redis->get_Time(键名, 库名);
   ```
 
-+ **写入固定位置**
++ **写入队列**
 
   ```
-  // 写入队列左边
+  // 插入集合：写入队列左边 并根据名称自动切换库
   \PhalApi\DI()->redis->set_Lpush(队列键名,值, 库名);
-  // 读取队列右边
-  \PhalApi\DI()->redis->get_lpop(队列键名, 库名);
+  
+  //插入集合：写入队列右边 并根据名称自动切换库
+  \PhalApi\DI()->redis->set_rPush(队列键名, 值, 库名);
+  
   // 读取队列右边 如果没有读取到阻塞一定时间(阻塞时间或读取配置文件blocking的值)
   \PhalApi\DI()->redis->get_Brpop(队列键名,值, 库名);
+  ```
+
++ **获取队列**
+
+  ```
+  // 读取队列左边
+  \PhalApi\DI()->redis->get_lpop(队列键名, 库名);
+  
+  // 读取队列右边
+  \PhalApi\DI()->redis->get_rPop(队列键名, 库名);
+  ```
+
++ **获取指定位置**
+
+  ```
+  //返回名称为key的list中start至end之间的元素（end为 -1 ，返回所有）
+  \PhalApi\DI()->redis->get_lRange(队列键名, $start, $end);
+  ```
+
++ **截取指定位置**
+
+  ```
+  //截取名称为key的list，保留start至end之间的元素,end为 -1 ，返回所有
+   \PhalApi\DI()->redis->get_lTrim(键名,$start, $end, 库名);
+  ```
+
++ **获取key的生存时间**
+
+  ```
+  \PhalApi\DI()->redis->get_lTrim(键名, 库名);
+  ```
+
++ **判断key是否存在**
+
+  ```
+  \PhalApi\DI()->redis->get_exists(键名, 库名);
   ```
 
 + **其他**
