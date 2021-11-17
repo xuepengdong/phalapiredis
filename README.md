@@ -56,6 +56,7 @@ $di->redis = function () {
 ```
 
 ## 5、入门使用
+备注：以下所有库名都可以使用阿拉伯数字
 
 + **永久键值队**
 
@@ -125,6 +126,58 @@ $di->redis = function () {
   ```
   \PhalApi\DI()->redis->get_exists(键名, 库名);
   ```
+  
++ **Hash：HDEL** 删除一个或多个哈希表字段
+
+  ```
+  \PhalApi\DI()->redis->HDEL($key, $field, $talbename);
+  ```
+  
+  备注： 命令用于删除哈希表 key 中的一个或多个指定字段，不存在的字段将被忽略。
+  
++ **Hash：HGETALL 获取在哈希表中指定 key 的所有字段和值**
+
+  ```
+  \PhalApi\DI()->redis->HGETALL($key, $talbename);
+  ```
+  
++ **Hash：HSET 将哈希表 key 中的字段 field 的值设为 value 。**
+
+  ```
+  \PhalApi\DI()->redis->HGETALL($key, $field, $value, $talbename);
+  ```
+
+  备注：Redis Hset 命令用于为哈希表中的字段赋值 。如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作。 如果字段已经存在于哈希表中，旧值将被覆盖。
+
+  
+
++ **Hash：HSET 将哈希表 key 中的字段 field 的值设为 value 。**
+
+  ```
+  \PhalApi\DI()->redis->HGETALL($key, $field, $value, $talbename);
+  ```
+
++ **Hash：HEXISTS 查看哈希表 key 中，指定的字段是否存在。**
+
+  ```
+  \PhalApi\DI()->redis->HGETALL($key, $field, $talbename);
+  ```
+
++ **Hash：HMGET获取所有给定字段的值** 
+
+  ```
+  \PhalApi\DI()->redis->HMGET($key, $field, $talbename);
+  ```
+
+  备注：Redis Hmget 命令用于返回哈希表中，一个或多个给定字段的值。如果指定的字段不存在于哈希表，那么返回一个 nil 值。可以传数组
+
++ **Hash：HGET 获取指定字段值**
+
+  ```
+  \PhalApi\DI()->redis->HGET($key, $field, $talbename);
+  ```
+
+  备注：只传一个字段
 
 + **其他**
 
