@@ -286,7 +286,13 @@ class Lite extends RedisCache {
      */
     public function HDEL($key, $field, $talbename){
         $this->redis->select($talbename);
-        return $this->redis->HDEL($key, $field);
+        $array =  $this->redis->HDEL($key, $field);
+        if(!empty($array)){
+            foreach($array as $key=>$value){
+                $array[$key] = json_decode($value);
+            }
+        }
+        return $array;
     }
     /**
      * Redis Hgetall 命令用于返回哈希表中，所有的字段和值。在返回值里，紧跟每个字段名(field name)之后是字段的值(value)，所以返回值的长度是哈希表大小的两倍。
