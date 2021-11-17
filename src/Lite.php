@@ -288,7 +288,7 @@ class Lite extends RedisCache {
      */
     public function HSET ($key, $field, $value, $talbename){
         $this->redis->select($talbename);
-        $this->redis->HSET ($key, $field, $value);
+        $this->redis->HSET ($key, $field, json_encode($value));
     }
 
     /**
@@ -303,7 +303,7 @@ class Lite extends RedisCache {
      */
     public function HMGET ($key, $field, $talbename){
         $this->redis->select($talbename);
-        $this->redis->HMGET ($key, $field);
+        $this->redis->HMGET ($key, json_decode($field));
     }
 
     //----------------------------------------------------通用方法---------------------------------------------------
