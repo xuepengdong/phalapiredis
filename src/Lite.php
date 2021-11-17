@@ -287,14 +287,16 @@ class Lite extends RedisCache {
      * 如果字段已经存在于哈希表中，旧值将被覆盖。
      */
     public function HSET ($key, $field, $value, $talbename){
-        $this->redis->HSET ($key, $field, $value, $talbename);
+        select($talbename);
+        $this->redis->HSET ($key, $field, $value);
     }
 
     /**
      * Redis Hexists 命令用于查看哈希表的指定字段是否存在。
      */
     public function HEXISTS ($key, $field, $talbename){
-        $this->redis->HEXISTS ($key, $field, $talbename);
+        select($talbename);
+        $this->redis->HEXISTS ($key, $field);
     }
     //----------------------------------------------------通用方法---------------------------------------------------
 
