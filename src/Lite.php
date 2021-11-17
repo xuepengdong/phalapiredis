@@ -303,7 +303,12 @@ class Lite extends RedisCache {
      */
     public function HMGET ($key, $field, $talbename){
         $this->redis->select($talbename);
-        return json_decode($this->redis->HMGET ($key, $field));
+        if(is_array($field)){
+            return json_decode($this->redis->HMGET ($key, $field));
+        }else{
+            $fieldArray[] = $field;
+            return json_decode($this->redis->HMGET ($key, $fieldArray));
+        }
     }
 
     //----------------------------------------------------通用方法---------------------------------------------------
