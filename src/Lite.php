@@ -298,19 +298,30 @@ class Lite extends RedisCache {
         $this->redis->select($talbename);
         return $this->redis->HEXISTS ($key, $field);
     }
+
     /**
      * Redis Hmget 命令用于返回哈希表中，一个或多个给定字段的值。如果指定的字段不存在于哈希表，那么返回一个 nil 值。
      */
     public function HMGET ($key, $field, $talbename){
         $this->redis->select($talbename);
         if(is_array($field)){
-            return json_decode($this->redis->HMGET ($key, $field));
+             $return_field = $this->redis->HMGET ($key, $field);
         }else{
             $fieldArray[] = $field;
-            return json_decode($this->redis->HMGET ($key, $fieldArray));
+            $return_field = $this->redis->HMGET ($key, $fieldArray);
         }
+        foreach ($return_field as $key => $value){
+            $return_field[$key] = json_decode($value);
+        }
+        return $return_field;
     }
 
+    /**
+     * Redis Hget 命令用于返回哈希表中指定字段的值。
+     */
+    public function HGET($key, $field, $talbename){
+        return json_decode($this->redis->HGET($key, $field, $talbename));
+    }
     //----------------------------------------------------通用方法---------------------------------------------------
 
     /**
