@@ -320,7 +320,8 @@ class Lite extends RedisCache {
      * Redis Hget 命令用于返回哈希表中指定字段的值。
      */
     public function HGET($key, $field, $talbename){
-        return json_decode($this->redis->HGET($key, $field, $talbename));
+        $this->redis->select($talbename);
+        return json_decode($this->redis->HGET($key, $field));
     }
     //----------------------------------------------------通用方法---------------------------------------------------
 
