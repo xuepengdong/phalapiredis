@@ -271,13 +271,12 @@ $di->redis = function () {
 
 + **计数器：**
 
-  + **counter_forever：**永久计数器，回调当前计数：
+  + **counter_forever**永久计数器，回调当前计数：
 
     ```
     \PhalApi\DI()->redis->counter_forever($key, $tablename);
     ```
 
-    
 
 
 + **公用：**
