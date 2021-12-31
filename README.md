@@ -60,63 +60,63 @@ $di->redis = function () {
 
 + **永久键值**
 
-  + 存入永久的单个键值
+  + **set_forever**：存入永久的单个键值
 
     ```
     \PhalApi\DI()->redis->set_forever(键名, 值, 库名);
     ```
 
-  + 获取单个永久的键值
+  + **get_forever**：获取单个永久的键值
 
     ```
     \PhalApi\DI()->redis->get_forever(键名, 库名);
     ```
 
-  + 返回原来key中的值，并将新的value重新写入key
+  + **get_getSet**：返回原来key中的值，并将新的value重新写入key
 
     ```
     \PhalApi\DI()->redis->get_getSet(键名, 值, 库名);
     ```
 
-  + 给key后面加上value
+  + **set_append**：给key后面加上value
 
     ```
     \PhalApi\DI()->redis->set_append(键名 , 值, 库名);
     ```
 
-  + 返回key 的长度
+  + **get_strlen**：返回key 的长度
 
     ```
     \PhalApi\DI()->redis->get_strlen('key1' , 'users');
     ```
 
-  + 存入永久的多个键值
+  + **set_list**：存入永久的多个键值
 
     ```
     \PhalApi\DI()->redis->set_list(数组, 库名);
     例子：\PhalApi\DI()->redis->set_list(array('key0' => 'value0', 'key1' => 'value1'), 'users');
     ```
 
-  + 获取多个键值
+  + **get_list**：获取多个键值
 
     ```
     \PhalApi\DI()->redis->get_list(数组, 库名);
     例子：\PhalApi\DI()->redis->get_list(array('key0' , 'key1'), 'users');
     ```
 
-  + 判断key是否存在
+  + **get_exists**：判断key是否存在
 
     ```
     \PhalApi\DI()->redis->get_exists(键名, 库名);
     ```
     
-  + 删除一个键值队适用于所有
+  + **del**：删除一个键值队适用于所有
 
     ```
     \PhalApi\DI()->redis->del(键名, 库名);
     ```
     
-  + 切换DB并且获得操作实例
+  + **get_redis**：切换DB并且获得操作实例
 
     ```
     \PhalApi\DI()->redis->get_redis(键名, 库名);
@@ -126,25 +126,25 @@ $di->redis = function () {
 
 + **有时效键值**
 
-  + 存入一个有时效性的键值队,默认600秒
+  + **set_Time**：存入一个有时效性的键值队,默认600秒
   
     ```
     \PhalApi\DI()->redis->set_Time(键名,值,有效时间,库名);
     ```
   
-  + 修改值，不改变失效时间
+  + **save_Time**：修改值，不改变失效时间
   
     ```
     \PhalApi\DI()->redis->save_Time(键名,新的值,库名);
     ```
   
-  + 获取一个有时效性的键值
+  + **get_Time**：获取一个有时效性的键值
   
     ```
     \PhalApi\DI()->redis->get_Time(键名, 库名);
     ```
   
-  + 获取一个key的失效时间，-1：持久化；-2：不存在；其他：失效时间秒
+  + **get_time_ttl**：获取一个key的失效时间，-1：持久化；-2：不存在；其他：失效时间秒
   
     ```
     \PhalApi\DI()->redis->get_time_ttl(键名, 库名);
@@ -154,73 +154,73 @@ $di->redis = function () {
   
 + **队列**
 
-  + 插入集合：写入队列左边 并根据名称自动切换库
+  + **set_Lpush**：插入集合：写入队列左边 并根据名称自动切换库
   
     ```
     \PhalApi\DI()->redis->set_Lpush(队列键名,值, 库名);
     ```
   
-  + 插入集合：写入队列左边 如果value已经存在，则不添加 并根据名称自动切换库
+  + **set_lPushx**：插入集合：写入队列左边 如果value已经存在，则不添加 并根据名称自动切换库
   
     ```
      \PhalApi\DI()->redis->set_lPushx(队列键名, 值, 库名);
     ```
   
-  + 读取队列左边
+  + **get_lpop**：读取队列左边
   
     ```
     \PhalApi\DI()->redis->get_lpop(队列键名, 库名);
     ```
   
-  + 读取队列左边 如果没有读取到阻塞一定时间 并根据名称自动切换库
+  + **get_blPop**：读取队列左边 如果没有读取到阻塞一定时间 并根据名称自动切换库
   
     ```
     \PhalApi\DI()->redis->get_blPop(队列键名,值, 库名);
     ```
   
-  + 插入集合：写入队列右边 并根据名称自动切换库
+  + **set_rPush**：插入集合：写入队列右边 并根据名称自动切换库
   
     ```
     \PhalApi\DI()->redis->set_rPush(队列键名, 值, 库名);
     ```
   
-  + 写入队列右边 如果value已经存在，则不添加 并根据名称自动切换库
+  + **set_rPushx**：写入队列右边 如果value已经存在，则不添加 并根据名称自动切换库
   
     ```
     \PhalApi\DI()->redis->set_rPushx(队列键名, 值, 库名);
     ```
   
-  + 读取队列右边
+  + **get_rPop**：读取队列右边
   
     ```
     \PhalApi\DI()->redis->get_rPop(队列键名, 库名);
     ```
   
-  + 读取队列右边 如果没有读取到阻塞一定时间 并根据名称自动切换库
+  + **get_brPop**：读取队列右边 如果没有读取到阻塞一定时间 并根据名称自动切换库
   
     ```
     \PhalApi\DI()->redis->get_brPop(队列键名,值, 库名);
     ```
   
-  + 读取list有多少个元素
+  + **get_lSize**：读取list有多少个元素
   
     ```
     \PhalApi\DI()->redis->get_lSize(队列键名, 库名);
     ```
   
-  + 从左数设置list中指定位置为新的值
+  + **get_lSize**：从左数设置list中指定位置为新的值
   
     ```
     \PhalApi\DI()->redis->get_lSize(队列键名, 位置, 值, 库名);
     ```
   
-  + 获取指定位置 返回名称为key的list中start至end之间的元素（end为 -1 ，返回所有）
+  + **get_lRange**：获取指定位置 返回名称为key的list中start至end之间的元素（end为 -1 ，返回所有）
   
     ```
     \PhalApi\DI()->redis->get_lRange(队列键名, $start, $end);
     ```
   
-  + 截取指定位置 截取名称为key的list，保留start至end之间的元素,end为 -1 ，返回所有
+  + **get_lTrim**：截取指定位置 截取名称为key的list，保留start至end之间的元素,end为 -1 ，返回所有
   
     ```
     \PhalApi\DI()->redis->get_lTrim(键名,$start, $end, 库名);
@@ -249,7 +249,7 @@ $di->redis = function () {
     \PhalApi\DI()->redis->HGETALL($key, $tablename);
     备注：Redis Hset 命令用于为哈希表中的字段赋值 。如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作。 如果字段已经存在于哈希表中，旧值将被覆盖。
     ```
-  + **HEXISTS **查看哈希表 key 中，指定的字段是否存在。
+  + **HEXISTS** 查看哈希表 key 中，指定的字段是否存在。
 
     ```
     \PhalApi\DI()->redis->HEXISTS($key, $field, $tablename);
@@ -281,97 +281,97 @@ $di->redis = function () {
 
 + **公用：**
 
-  + 返回key的类型值：
+  + **type**：返回key的类型值：
 
     ```
     \PhalApi\DI()->redis->type($key, $tablename);
     ```
 
-  + 查看现在数据库有多少key
+  + **dbSize**查看现在数据库有多少key
 
     ```
     \PhalApi\DI()->redis->dbSize($tablename);
     ```
 
-  + 转移一个key到另外一个数据库
+  + **move**：转移一个key到另外一个数据库
 
     ```
     \PhalApi\DI()->redis->move($key, $tablename);
     ```
 
-  + 给key重命名
+  + **rename**：给key重命名
 
     ```
     \PhalApi\DI()->redis->rename($OLD_KEY_NAME, $NEW_KEY_NAME);
     ```
 
-  + 给key重命名 如果重新命名的名字已经存在，不会替换成功
+  + **renameNx**：给key重命名 如果重新命名的名字已经存在，不会替换成功
 
     ```
     \PhalApi\DI()->redis->renameNx($OLD_KEY_NAME, $NEW_KEY_NAME);
     ```
 
-  + 删除键值 并根据名称自动切换库(对所有通用)
+  + **del**：删除键值 并根据名称自动切换库(对所有通用)
 
     ```
     \PhalApi\DI()->redis->del($key);
     ```
 
-  + 返回redis的版本信息等详情
+  + **info**：返回redis的版本信息等详情
 
     ```
     \PhalApi\DI()->redis->info();
     ```
 
-  + 查看redis链接状态
+  + **ping**：查看redis链接状态
 
     ```
     \PhalApi\DI()->redis->ping();
     ```
 
-  + 切换DB
+  + **switchDB**：切换DB
 
     ```
     \PhalApi\DI()->redis->switchDB();
     ```
 
-  + 清空当前数据库
+  + **flushDB**：清空当前数据库
 
     ```
     \PhalApi\DI()->redis->flushDB();
     ```
 
-  + 清空所有数据库
+  + **flushAll**：清空所有数据库
 
     ```
     \PhalApi\DI()->redis->flushAll();
     ```
 
-  + 选择从服务器
+  + **slaveof**：选择从服务器
 
     ```
     \PhalApi\DI()->redis->slaveof ($host, $port);
     ```
 
-  + 将数据同步保存到磁盘
+  + **save**：将数据同步保存到磁盘
 
     ```
     \PhalApi\DI()->redis->save();
     ```
 
-  + 将数据异步保存到磁盘
+  + **bgsave**：将数据异步保存到磁盘
 
     ```
     \PhalApi\DI()->redis->bgsave();
     ```
 
-  + 返回上次成功将数据保存到磁盘的Unix时戳
+  + **lastSave**：返回上次成功将数据保存到磁盘的Unix时戳
 
     ```
     \PhalApi\DI()->redis->lastSave();
     ```
 
-  + 使用aof来进行数据库持久化
+  + **bgrewriteaof**：使用aof来进行数据库持久化
 
     ```
     \PhalApi\DI()->redis->bgrewriteaof();
