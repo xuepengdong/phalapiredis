@@ -109,19 +109,19 @@ $di->redis = function () {
     ```
     \PhalApi\DI()->redis->get_exists(键名, 库名);
     ```
-
-  +  删除一个键值队适用于所有
+    
+  + 删除一个键值队适用于所有
 
     ```
     \PhalApi\DI()->redis->del(键名, 库名);
     ```
-
-  +  切换DB并且获得操作实例
+    
+  + 切换DB并且获得操作实例
 
     ```
     \PhalApi\DI()->redis->get_redis(键名, 库名);
     ```
-
+    
     
 
 + **有时效键值**
@@ -166,7 +166,7 @@ $di->redis = function () {
      \PhalApi\DI()->redis->set_lPushx(队列键名, 值, 库名);
     ```
   
-  +  读取队列左边
+  + 读取队列左边
   
     ```
     \PhalApi\DI()->redis->get_lpop(队列键名, 库名);
