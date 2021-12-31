@@ -4,19 +4,10 @@ namespace Xuepengdong\Phalapiredis;
 use \PhalApi\Cache\RedisCache;
 /**
  * PhalApi2-Redis 拓展类
- * @author: 喵了个咪 <wenzhenxi@vip.qq.com> 2017-08-19
+ * @author: 疏雨滴梧桐 <260288701@qq.com> 2021-12-31
+ * @Maintenance: 喵了个咪 <wenzhenxi@vip.qq.com> 2017-08-19
  * @Maintenance: Axios <axioscros@aliyun.com> 于 2016-09-01 协助维护
- *
- * 在index.php中注册
- * \PhalApi\DI()->redis = function () {
- *       return new \PhalApi\Redis\Lite(\PhalApi\DI()->config->get("app.redis.servers"));
- *  };
- *
- * 例子:
- * // 存入永久的键值队
- * \PhalApi\DI()->redis->set_forever(键名,值,库名);
- * // 获取永久的键值队
- * \PhalApi\DI()->redis->get_forever(键名, 库名);
+
  *
  */
 class Lite extends RedisCache {
