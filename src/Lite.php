@@ -237,7 +237,7 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 返回名称为key的list中指定位置的元素
+     * 从左数设置list中指定位置为新的值
      */
     protected function set_lSet($key, $index, $value){
         return $this->redis->lSet($this->formatKey($key), $index, $this->formatValue($value));
@@ -247,8 +247,8 @@ class Lite extends RedisCache {
      * 返回名称为key的list中指定位置的元素
      */
     protected function get_lGet($key, $index){
-        $value = $this->redis->lGet($this->formatKey($key), $index);
-        return $value != FALSE ? $this->unformatValue($value[1]) : NULL;
+        $value = $this->redis->lindex($this->formatKey($key), $index);
+        return $value != FALSE ? $this->unformatValue($value) : NULL;
     }
 
     /**
@@ -413,7 +413,8 @@ class Lite extends RedisCache {
     /**
      * 随机返回key空间的一个key
      */
-    public function randomKey(){
+    public function randomKey($tablename){
+        $this->switchDB($tablename);
         return $this->redis->randomKey();
     }
 
