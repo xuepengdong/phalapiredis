@@ -249,20 +249,20 @@ $di->redis = function () {
     \PhalApi\DI()->redis->HGETALL($key, $tablename);
     备注：Redis Hset 命令用于为哈希表中的字段赋值 。如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作。 如果字段已经存在于哈希表中，旧值将被覆盖。
     ```
-  + **HEXISTS ：**查看哈希表 key 中，指定的字段是否存在。
+  + **HEXISTS **查看哈希表 key 中，指定的字段是否存在。
 
     ```
     \PhalApi\DI()->redis->HEXISTS($key, $field, $tablename);
     ```
 
-  + **HMGET：**获取所有给定字段的值
+  + **HMGET**获取所有给定字段的值
 
     ```
     \PhalApi\DI()->redis->HMGET($key, $field, $tablename);
     备注：Redis Hmget 命令用于返回哈希表中，一个或多个给定字段的值。如果指定的字段不存在于哈希表，那么返回一个 nil 值。可以传数组
     ```
 
-  + **HGET：** 获取指定字段值
+  + **HGET** 获取指定字段值
 
     ```
     \PhalApi\DI()->redis->HGET($key, $field, $tablename);
@@ -306,7 +306,7 @@ $di->redis = function () {
     \PhalApi\DI()->redis->rename($OLD_KEY_NAME, $NEW_KEY_NAME);
     ```
 
-  +  给key重命名 如果重新命名的名字已经存在，不会替换成功
+  + 给key重命名 如果重新命名的名字已经存在，不会替换成功
 
     ```
     \PhalApi\DI()->redis->renameNx($OLD_KEY_NAME, $NEW_KEY_NAME);
