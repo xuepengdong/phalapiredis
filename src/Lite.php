@@ -287,7 +287,7 @@ class Lite extends RedisCache {
         $array =  $this->redis->HGETALL($key);
         if(is_array($array) && !empty($array)){
             foreach($array as $key=> $value){
-                $array[$key] = json_decode($value);
+                $array[$key] = json_decode($value, true);
             }
         }
         return $array;
@@ -323,7 +323,7 @@ class Lite extends RedisCache {
             $return_field = $this->redis->HMGET ($key, $fieldArray);
         }
         foreach ($return_field as $key => $value){
-            $return_field[$key] = json_decode($value);
+            $return_field[$key] = json_decode($value, true);
         }
         return $return_field;
     }
