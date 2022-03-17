@@ -34,16 +34,24 @@ class Lite extends RedisCache {
     }
 
     //---------------------------------------------------string类型-------------------------------------------------
-
     /**
-     * 将value 的值赋值给key,生存时间为永久 并根据名称自动切换库
+     * @descr:将value 的值赋值给key,生存时间为永久 并根据名称自动切换库
+     * @date: 2022/3/17 11:42
+     * @example \PhalApi\DI()->redis->set_forever($key, $value, 1);
+     * @param $key
+     * @param $value
+     * @return bool
      */
     protected function set_forever($key, $value){
         return $this->redis->set($this->formatKey($key), $this->formatValue($value));
     }
 
     /**
-     * 获取value 并根据名称自动切换库
+     * @descr:获取value 并根据名称自动切换库
+     * @date: 2022/3/17 11:42
+     * @example \PhalApi\DI()->redis->get_forever($key, 1);
+     * @param $key
+     * @return mixed|null
      */
     protected function get_forever($key){
         $value = $this->redis->get($this->formatKey($key));
@@ -51,16 +59,18 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 存入一个有实效性的键值队
+     * @descr:存入一个有实效性的键值队
+     * @date: 2022/3/17 11:42
+     * @example \PhalApi\DI()->redis->set_time($key, $value, 3600, 1); 存入到1 redis数据库中，过期时间3600秒
+     * @param $key
+     * @param $value
+     * @param int $expire
+     * @return bool
      */
     protected function set_time($key, $value, $expire = 600){
         return $this->redis->setex($this->formatKey($key), $expire, $this->formatValue($value));
     }
 
-
-    /**
-     * 更新具有有效时间key的value，不重置有效时间
-     */
     protected function save_time($key, $value)
     {
         if($this->get_exists($key)){
@@ -72,7 +82,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 统一get/set方法,对于set_Time使用get_Time
+     * @descr:统一 get/set方法，对于set_time使用get_time
+     * @example \PhalApi\DI()->redis->get_time($key, 1);
+     * @date: 2022/3/17 11:46
+     * @param $key
+     * @return mixed|null
      */
     protected function get_time($key){
         $value = $this->redis->get($this->formatKey($key));
@@ -80,7 +94,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 得到一个key的生存时间
+     * @descr:得到一个key的生存时间
+     * @date: 2022/3/17 11:48
+     * @example \PhalApi\DI()->redis->get_time_ttl($key, 1);
+     * @param $key
+     * @return bool|int|null
      */
     protected function get_time_ttl($key){
         $value = $this->redis->ttl($this->formatKey($key));
@@ -88,8 +106,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 批量插入k-v,请求的v需要是一个数组 如下格式
-     * array('key0' => 'value0', 'key1' => 'value1')
+     * @descr:批量插入k-v,请求的v需要是一个数组 如下格式：array('key0' => 'value0', 'key1' => 'value1')
+     * @date: 2022/3/17 11:49
+     * @example \PhalApi\DI()->redis->set_list($key, 1);
+     * @param $value
+     * @return bool
      */
     protected function set_list($value){
         $data = array();
@@ -100,7 +121,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 批量获取k-v,请求的k需要是一个数组
+     * @descr:批量获取k-v,请求的k需要是一个数组
+     * @date: 2022/3/17 11:50
+     * @example \PhalApi\DI()->redis->get_list($key, 1);
+     * @param $key
+     * @return array
      */
     protected function get_list($key){
         $data = array();
@@ -115,14 +140,23 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 判断key是否存在。存在 true 不在 false
+     * @descr:判断key是否存在。存在 true 不在 false
+     * @date: 2022/3/17 11:51
+     * @example \PhalApi\DI()->redis->get_exists($key, 1);
+     * @param $key
+     * @return bool|int
      */
     protected function get_exists($key){
         return $this->redis->exists($this->formatKey($key));
     }
 
     /**
-     * 返回原来key中的值，并将value写入key
+     * @descr:返回原来key中的值，并将value写入key
+     * @date: 2022/3/17 11:51
+     * @example \PhalApi\DI()->redis->get_getSet($key, 1);
+     * @param $key
+     * @param $value
+     * @return mixed|null
      */
     protected function get_getSet($key, $value){
         $value = $this->redis->getSet($this->formatKey($key), $this->formatValue($value));
@@ -130,66 +164,106 @@ class Lite extends RedisCache {
     }
 
     /**
-     * string，名称为key的string的值在后面加上value
+     * @descr:string，名称为key的string的值在后面加上value
+     * @date: 2022/3/17 11:52
+     * @example \PhalApi\DI()->redis->set_append($key, $value, 1);
+     * @param $key
+     * @param $value
+     * @return int
      */
     protected function set_append($key, $value){
         return $this->redis->append($this->formatKey($key), $this->formatValue($value));
     }
 
     /**
-     * 返回原来key中的值，并将value写入key
+     * @descr:获取指定 key 所储存的字符串值的长度。当 key 储存的不是字符串值时，返回一个错误。
+     * @date: 2022/3/17 11:56
+     * @example \PhalApi\DI()->redis->set_append($key, 1);
+     * @param $key
+     * @return int
      */
     protected function get_strlen($key){
         return $this->redis->strlen($this->formatKey($key));
     }
 
     /**
-     * 自动增长
-     * value为自增长的值默认1
+     * @descr:Redis Incr 命令将 key 中储存的数字值增一。如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 INCR 操作。 如果值包含错误的类型，或字符串类型的值不能表示为数字，那么返回一个错误。本操作的值限制在 64 位(bit)有符号数字表示之内。
+     * @date: 2022/3/17 11:58
+     * @example \PhalApi\DI()->redis->get_incr($key, 1);
+     * @param $key
+     * @param int $value
+     * @return int
      */
     protected function get_incr($key, $value = 1){
         return $this->redis->incr($this->formatKey($key), $value);
     }
 
     /**
-     * 自动减少
-     * value为自减少的值默认1
+     * @descr:自动减少，value为自减少的值默认1；如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 DECR 操作。如果值包含错误的类型，或字符串类型的值不能表示为数字，那么返回一个错误。本操作的值限制在 64 位(bit)有符号数字表示之内。
+     * @date: 2022/3/17 11:59
+     * @example \PhalApi\DI()->redis->get_decr($key, 1);
+     * @param $key
+     * @param int $value
+     * @return int
      */
     protected function get_decr($key, $value = 1){
         return $this->redis->decr($this->formatKey($key), $value);
     }
     //------------------------------------------------List类型-------------------------------------------------
-
     /**
-     * 写入队列左边 并根据名称自动切换库
+     * @descr:写入队列左边 并根据名称自动切换库
+     * @date: 2022/3/17 13:34
+     * @example \PhalApi\DI()->redis->set_lPush($key, $value, 1);
+     * @param $key
+     * @param $value
+     * @return bool|int
      */
     protected function set_lPush($key, $value){
         return $this->redis->lPush($this->formatKey($key), $this->formatValue($value));
     }
 
     /**
-     * 写入队列左边 如果value已经存在，则不添加 并根据名称自动切换库
+     * @descr:将一个值插入到已存在的列表头部，列表不存在时操作无效。
+     * @date: 2022/3/17 13:35
+     * @example \PhalApi\DI()->redis->set_lPushx($key, $value, 1);
+     * @param $key
+     * @param $value
+     * @return bool|int
      */
     protected function set_lPushx($key, $value){
         return $this->redis->lPushx($this->formatKey($key), $this->formatValue($value));
     }
 
     /**
-     * 写入队列右边 并根据名称自动切换库
+     * @descr:命令用于将一个或多个值插入到列表的尾部(最右边)。如果列表不存在，一个空列表会被创建并执行 RPUSH 操作。 当列表存在但不是列表类型时，返回一个错误。并根据名称自动切换库
+     * @date: 2022/3/17 13:36
+     * @example \PhalApi\DI()->redis->set_rPush($key, $value, 1);
+     * @param $key
+     * @param $value
+     * @return bool|int
      */
     protected function set_rPush($key, $value){
         return $this->redis->rPush($this->formatKey($key), $this->formatValue($value));
     }
 
     /**
-     * 写入队列右边 如果value已经存在，则不添加 并根据名称自动切换库
+     * @descr:命令用于将一个值插入到已存在的列表尾部(最右边)。如果列表不存在，操作无效。 并根据名称自动切换库
+     * @date: 2022/3/17 13:38
+     * @example \PhalApi\DI()->redis->set_rPushx($key, $value, 1);
+     * @param $key
+     * @param $value
+     * @return bool|int
      */
     protected function set_rPushx($key, $value){
         return $this->redis->rPushx($this->formatKey($key), $this->formatValue($value));
     }
 
     /**
-     * 读取队列左边
+     * @descr:命令用于移除并返回列表的第一个元素。
+     * @date: 2022/3/17 13:39
+     * @example \PhalApi\DI()->redis->get_lPop($key, 1);
+     * @param $key
+     * @return mixed|null
      */
     protected function get_lPop($key){
         $value = $this->redis->lPop($this->formatKey($key));
@@ -197,7 +271,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 读取队列右边
+     * @descr:命令用于移除列表的最后一个元素，返回值为移除的元素。
+     * @date: 2022/3/17 13:41
+     * @example \PhalApi\DI()->redis->get_rPop($key, 1);
+     * @param $key
+     * @return mixed|null
      */
     protected function get_rPop($key){
         $value = $this->redis->rPop($this->formatKey($key));
@@ -205,7 +283,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 读取队列左边 如果没有读取到阻塞一定时间 并根据名称自动切换库
+     * @descr:命令移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
+     * @date: 2022/3/17 13:42
+     * @example \PhalApi\DI()->redis->get_blPop($key, 1);
+     * @param $key
+     * @return mixed|null
      */
     protected function get_blPop($key){
         $value = $this->redis->blPop($this->formatKey($key), \PhalApi\DI()->config->get('app.redis.blocking'));
@@ -213,7 +295,11 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 读取队列右边 如果没有读取到阻塞一定时间 并根据名称自动切换库
+     * @descr:命令移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
+     * @date: 2022/3/17 13:43
+     * @example \PhalApi\DI()->redis->get_brPop($key, 1);
+     * @param $key
+     * @return mixed|null
      */
     protected function get_brPop($key){
         $value = $this->redis->brPop($this->formatKey($key), \PhalApi\DI()->config->get('app.redis.blocking'));
@@ -221,21 +307,47 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 名称为key的list有多少个元素
+     * @descr:命令用于返回列表的长度。 如果列表 key 不存在，则 key 被解释为一个空列表，返回 0 。 如果 key 不是列表类型，返回一个错误。
+     * @date: 2022/3/17 13:43
+     * @example \PhalApi\DI()->redis->get_lSize($key, 1);
+     * @param $key
+     * @return int
      */
     protected function get_lSize($key){
         return $this->redis->lSize($this->formatKey($key));
     }
 
     /**
-     * 从左数设置list中指定位置为新的值
+     * @descr:命令用于返回列表的长度。 如果列表 key 不存在，则 key 被解释为一个空列表，返回 0 。 如果 key 不是列表类型，返回一个错误。
+     * @date: 2022/3/17 13:43
+     * @example \PhalApi\DI()->redis->get_lLen($key, 1);
+     * @param $key
+     * @return int
+     */
+    protected function get_lLen($key){
+        return $this->redis->lLen($this->formatKey($key));
+    }
+
+    /**
+     * @descr: 从左数通过索引来设置元素的值。当索引参数超出范围，或对一个空列表进行 LSET 时，返回一个错误。 关于列表下标的更多信息，请参考 LINDEX 命令
+     * @date: 2022/3/17 13:50
+     * @example \PhalApi\DI()->redis->set_lSet($key, 6, 'hello', 1);
+     * @param $key
+     * @param $index
+     * @param $value
+     * @return bool
      */
     protected function set_lSet($key, $index, $value){
         return $this->redis->lSet($this->formatKey($key), $index, $this->formatValue($value));
     }
 
     /**
-     * 返回名称为key的list中指定位置的元素
+     * @descr:命令用于通过索引获取列表中的元素。你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
+     * @date: 2022/3/17 13:53
+     * @example \PhalApi\DI()->redis->get_lGet($key, 6, 1);
+     * @param $key
+     * @param $index
+     * @return mixed|null
      */
     protected function get_lGet($key, $index){
         $value = $this->redis->lindex($this->formatKey($key), $index);
@@ -243,7 +355,14 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 返回名称为key的list中start至end之间的元素（end为 -1 ，返回所有）
+     * @descr:返回名称为key的list中start至end之间的元素（end为 -1 ，返回所有）
+     * @descr:详细解释：返回列表中指定区间内的元素，区间以偏移量 START 和 END 指定。 其中 0 表示列表的第一个元素， 1 表示列表的第二个元素，以此类推。 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
+     * @date: 2022/3/17 13:55
+     * @example \PhalApi\DI()->redis->get_lRange($key, -6, 2, 1);
+     * @param $key
+     * @param $start
+     * @param $end
+     * @return array
      */
     protected function get_lRange($key, $start, $end){
         $rs = $this->redis->lRange($this->formatKey($key), $start, $end);
@@ -254,13 +373,20 @@ class Lite extends RedisCache {
     }
 
     /**
-     * 截取名称为key的list，保留start至end之间的元素
+     * @descr:截取名称为key的list，保留start至end之间的元素
+     * @descr:详细解释： 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。下标 0 表示列表的第一个元素，以 1 表示列表的第二个元素，以此类推。 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
+     * @date: 2022/3/17 13:56
+     * @example \PhalApi\DI()->redis->get_lTrim($key, 0, -1, 1);
+     * @param $key
+     * @param $start
+     * @param $end
+     * @return array|bool|mixed
      */
     protected function get_lTrim($key, $start, $end){
         $rs = $this->redis->lTrim($this->formatKey($key), $start, $end);
         if(is_array($rs)){
             foreach($rs as $k => $v){
-            $rs[$k] = $this->unformatValue($v);
+                $rs[$k] = $this->unformatValue($v);
             }
         }else{
             $rs = $this->unformatValue($rs);
@@ -273,14 +399,37 @@ class Lite extends RedisCache {
     //----------------------------------------------------zset类型---------------------------------------------------
     //----------------------------------------------------Hash类型---------------------------------------------------
     /**
-     * Redis Hdel 命令用于删除哈希表 key 中的一个或多个指定字段，不存在的字段将被忽略。
+     * @descr:删除哈希表 key 中的一个或多个指定字段，不存在的字段将被忽略。
+     * @date: 2022/3/17 13:59
+     * @example \PhalApi\DI()->redis->HDEL('test', array('testkey1','testkey2'), 0);
+     * @param $key
+     * @param $field
+     * @param $talbename
+     * @return bool|int
      */
     public function HDEL($key, $field, $talbename){
         $this->redis->select($talbename);
-        return $this->redis->HDEL($key, $field);
+        $i = 0;
+        if(is_array($field)){
+            foreach($field as $hashkey){
+                $hashDelState = $this->redis->HDEL($key, $hashkey);
+                if($hashDelState){
+                    $i++;
+                }
+            }
+        }else{
+            $i = $this->redis->HDEL($key, $field);
+        }
+        return $i;
     }
+
     /**
-     * Redis Hgetall 命令用于返回哈希表中，所有的字段和值。在返回值里，紧跟每个字段名(field name)之后是字段的值(value)，所以返回值的长度是哈希表大小的两倍。
+     * @descr:Redis Hgetall 命令用于返回哈希表中，所有的字段和值。在返回值里，紧跟每个字段名(field name)之后是字段的值(value)，所以返回值的长度是哈希表大小的两倍。
+     * @date: 2022/3/17 15:38
+     * @example \PhalApi\DI()->redis->HGETALL('test', 0);
+     * @param $key
+     * @param $talbename
+     * @return array
      */
     public function HGETALL($key, $talbename){
         $this->redis->select($talbename);
@@ -294,9 +443,14 @@ class Lite extends RedisCache {
     }
 
     /**
-     * Redis Hset 命令用于为哈希表中的字段赋值 。
-     * 如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作。
-     * 如果字段已经存在于哈希表中，旧值将被覆盖。
+     * @descr:Redis Hset 命令用于为哈希表中的字段赋值 。如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作。如果字段已经存在于哈希表中，旧值将被覆盖。
+     * @date: 2022/3/17 15:39
+     * @example \PhalApi\DI()->redis->HSET($key, $field, $value, 0);
+     * @param $key
+     * @param $field
+     * @param $value
+     * @param $talbename
+     * @return bool|int
      */
     public function HSET ($key, $field, $value, $talbename){
         $this->redis->select($talbename);
@@ -304,7 +458,13 @@ class Lite extends RedisCache {
     }
 
     /**
-     * Redis Hexists 命令用于查看哈希表的指定字段是否存在。
+     * @descr:Redis Hexists 命令用于查看哈希表的指定字段是否存在。
+     * @date: 2022/3/17 15:40
+     * @example \PhalApi\DI()->redis->HEXISTS($key, $field, $talbename);
+     * @param $key
+     * @param $field
+     * @param $talbename
+     * @return bool
      */
     public function HEXISTS ($key, $field, $talbename){
         $this->redis->select($talbename);
@@ -312,12 +472,18 @@ class Lite extends RedisCache {
     }
 
     /**
-     * Redis Hmget 命令用于返回哈希表中，一个或多个给定字段的值。如果指定的字段不存在于哈希表，那么返回一个 nil 值。
+     * @descr:Redis Hmget 命令用于返回哈希表中，一个或多个给定字段的值。如果指定的字段不存在于哈希表，那么返回一个 nil 值。
+     * @date: 2022/3/17 15:40
+     * @example \PhalApi\DI()->redis->HMGET($key, $field, $talbename);
+     * @param $key
+     * @param $field
+     * @param $talbename
+     * @return array
      */
     public function HMGET ($key, $field, $talbename){
         $this->redis->select($talbename);
         if(is_array($field)){
-             $return_field = $this->redis->HMGET ($key, $field);
+            $return_field = $this->redis->HMGET ($key, $field);
         }else{
             $fieldArray[] = $field;
             $return_field = $this->redis->HMGET ($key, $fieldArray);
@@ -329,7 +495,13 @@ class Lite extends RedisCache {
     }
 
     /**
-     * Redis Hget 命令用于返回哈希表中指定字段的值。
+     * @descr:Redis Hget 命令用于返回哈希表中指定字段的值。
+     * @date: 2022/3/17 15:41
+     * @example \PhalApi\DI()->redis->HMGET($key, $field, $talbename);
+     * @param $key
+     * @param $field
+     * @param $talbename
+     * @return mixed
      */
     public function HGET($key, $field, $talbename){
         $this->redis->select($talbename);
