@@ -1,6 +1,6 @@
 {
     "name": "xuepengdong/phalapiredis",
-    "description": "兼容phalapi/redis； Redis 增强版",
+    "description": "兼容phalapi/redis 所有方法； Redis 增强版",
     "keywords": [
         "phalapi",
         "redis",
