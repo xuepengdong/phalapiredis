@@ -277,7 +277,39 @@ $di->redis = function () {
     \PhalApi\DI()->redis->counter_forever($key, $tablename);
     ```
 
++ **zset类型**
 
+  + **ZADD：** 向有序集合添加一个或多个成员，或者更新已存在成员的分数
+
+    ```
+    \PhalApi\DI()->redis->ZADD('runoobkey', 3,'mysql',  0);
+    ```
+
+  + **ZCARD：**Redis Zcard 命令用于计算集合中元素的数量。
+
+    ```
+    \PhalApi\DI()->redis->ZCARD('runoobkey', 0);
+    ```
+
+  + **ZCOUNT：**Redis Zcount 命令用于计算有序集合中指定分数区间的成员数量。
+
+    ```
+    \PhalApi\DI()->redis->ZCARD('runoobkey', 5, 10, 0);
+    ```
+
+  + **ZINCRBY：**命令对有序集合中指定成员的分数加上增量
+
+    ```
+     \PhalApi\DI()->redis->ZINCRBY('myzset', 2, "one", 0);
+    ```
+
+  + **ZREM：**Redis Zrem 命令用于移除有序集中的一个或多个成员，不存在的成员将被忽略。当 key 存在但不是有序集类型时，返回一个错误。
+
+    ```
+    \PhalApi\DI()->redis->ZREM(0, 'myzset', 'one', 'two', 'five');
+    ```
+
+    
 
 + **公用：**
 

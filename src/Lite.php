@@ -397,6 +397,99 @@ class Lite extends RedisCache {
     //未实现 lRem lInsert  rpoplpush
     //----------------------------------------------------set类型---------------------------------------------------
     //----------------------------------------------------zset类型---------------------------------------------------
+    /**
+     * @descr:向有序集合添加一个或多个成员，或者更新已存在成员的分数  ZADD KEY_NAME SCORE1 VALUE1.. SCOREN VALUEN
+     * @date: 2022/08/05 13:59
+     * @example \PhalApi\DI()->redis->ZADD('runoobkey', 3,'mysql',  0);
+     * @param $key
+     * @param $SCORE
+     * @param $VALUE
+     * @param $talbename
+     * @return bool|int  0:失败, 1:成功
+     */
+    public function ZADD($key, $SCORE, $VALUE, $talbename){
+        //ZADD KEY_NAME SCORE1 VALUE1.. SCOREN VALUEN
+        $this->redis->select($talbename);
+        return $this->redis->ZADD($key, $SCORE, $VALUE);
+    }
+
+    /**
+     * @descr:Redis Zcard 命令用于计算集合中元素的数量。
+     * @date: 2022/08/05 13:59
+     * @example \PhalApi\DI()->redis->ZCARD('runoobkey', 0);
+     * @param $key
+     * @param $talbename
+     * @return int
+     */
+    public function ZCARD($key,$talbename){
+        $this->redis->select($talbename);
+        return $this->redis->ZCARD($key);
+    }
+
+    /**
+     * @descr: Redis Zcount 命令用于计算有序集合中指定分数区间的成员数量。
+     * @date: 2022/08/05 13:59
+     * @example \PhalApi\DI()->redis->ZCARD('runoobkey', 5, 10, 0);
+     * @param $key
+     * @param $min
+     * @param $max
+     * @param $talbename
+     * @return int
+     */
+    public function ZCOUNT($key, $min, $max, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->ZCOUNT($key, $min, $max);
+    }
+
+    /**
+     * @descr: Redis Zincrby 命令对有序集合中指定成员的分数加上增量 increment
+    可以通过传递一个负数值 increment ，让分数减去相应的值，比如 ZINCRBY key -5 member ，就是让 member 的 score 值减去 5 。
+    当 key 不存在，或分数不是 key 的成员时， ZINCRBY key increment member 等同于 ZADD key increment member 。
+    当 key 不是有序集类型时，返回一个错误。
+    分数值可以是整数值或双精度浮点数。
+     * @date: 2022/08/05 13:59
+     * @example \PhalApi\DI()->redis->ZINCRBY('myzset', 2, "one", 0);
+     * @param $key
+     * @param $increment
+     * @param $member
+     * @param $talbename
+     * @return int
+     */
+    public function ZINCRBY($key, $increment, $member, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->ZINCRBY($key, $increment, $member);
+    }
+    /**
+     * @descr: Redis Zrem 命令用于移除有序集中的一个或多个成员，不存在的成员将被忽略。当 key 存在但不是有序集类型时，返回一个错误。
+     * @date: 2022/08/05 13:59
+     * @example \PhalApi\DI()->redis->ZREM(0, 'myzset', 'one', 'two', 'five');
+     * @param $key
+     * @param $increment
+     * @param $member
+     * @param $talbename
+     * @return int
+     */
+    public function ZREM($talbename, $key, $member1, ...$otherMembers){
+        $this->redis->select($talbename);
+        return $this->redis->zRem($key, $member1, ...$otherMembers);
+    }
+
+    //ZINTERSTORE destination numkeys key [key ...]  待做
+    //ZLEXCOUNT key min max待做
+    //ZRANGE key start stop [WITHSCORES]待做
+    //ZRANGEBYLEX key min max [LIMIT offset count]待做
+    //ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]待做
+    //ZRANK key member待做
+    //	ZREMRANGEBYSCORE key min max待做
+    //ZREVRANGE key start stop [WITHSCORES]待做
+    //ZREVRANGEBYSCORE key max min [WITHSCORES]待做
+    //	ZREVRANK key member待做
+    //ZSCORE key member待做
+    //ZUNIONSTORE destination numkeys key [key ...]待做
+    //	ZSCAN key cursor [MATCH pattern] [COUNT count]待做
+
+
+
     //----------------------------------------------------Hash类型---------------------------------------------------
     /**
      * @descr:删除哈希表 key 中的一个或多个指定字段，不存在的字段将被忽略。
