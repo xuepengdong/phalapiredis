@@ -2,12 +2,13 @@
 
 ## 1、前言
 
-基于PhalApi2-Redis 官方做了一些优化和新增，有问题欢迎指正；欢迎pull request
+基于PhalApi2-Redis 官方做了一些优化和新增，有问题欢迎指正；欢迎pull request，**兼容PHP Redis所有方法**
 
 + 官网地址：[http://www.phalapi.net/](http://www.phalapi.net/ "PhalApi官网")
 
 + GitHub HomePage：[https://github.com/xuepengdong/phalapiredis](https://github.com/xuepengdong/phalapiredis)
 + github Issues： [https://github.com/xuepengdong/phalapiredis/issues](https://github.com/xuepengdong/phalapiredis/issues)
++ PHP Redis：https://github.com/ukko/phpredis-phpdoc
 
 ## 2、安装：项目根目录composer.json添加
 
@@ -58,23 +59,35 @@ $di->redis = function () {
 ## 5、入门使用
 备注：以下所有库名都可以使用阿拉伯数字
 
++ **getRedis** 调用PHP 原生redis，获取Redis实例，当封装的方法未能满足时，可调用此接口获取Reids实例进行操作
+
+  ```php
+  以下为例子：
+  
+  $getRedis =  \PhalApi\DI()->redis->getRedis();
+  $getRedis->select(1);
+  return $getRedis->set('key20220806', 'value20220806', 20000);
+  ```
+
+  
+
 + **永久键值**
 
   + **set_forever**：存入永久的单个键值
 
-    ```
+    ```php
     \PhalApi\DI()->redis->set_forever(键名, 值, 库名);
     ```
 
   + **get_forever**：获取单个永久的键值
 
-    ```
+    ```php
     \PhalApi\DI()->redis->get_forever(键名, 库名);
     ```
 
   + **get_getSet**：返回原来key中的值，并将新的value重新写入key
 
-    ```
+    ```php
     \PhalApi\DI()->redis->get_getSet(键名, 值, 库名);
     ```
 
@@ -152,7 +165,7 @@ $di->redis = function () {
   
     
   
-+ **队列**
++ **列表List**
 
   + **set_Lpush**：插入集合：写入队列左边 并根据名称自动切换库
   
@@ -228,7 +241,7 @@ $di->redis = function () {
     
     
   
-+ **Hash 类型**
++ **哈希 Hash **
 
   + **HSET：** 将哈希表 key 中的字段 field 的值设为 value 。
 
@@ -268,6 +281,43 @@ $di->redis = function () {
     \PhalApi\DI()->redis->HGET($key, $field, $tablename);
     备注：只传一个字段
     ```
+    
+    
+
+
++ **有序集合 （sorted set）**
+
+  + **ZADD** 向有序集合添加一个或多个成员，或者更新已存在成员的分数
+
+    ```
+    \PhalApi\DI()->redis->ZADD('runoobkey', 3,'mysql',  0);
+    ```
+
+  + **ZCARD** Redis Zcard 命令用于计算集合中元素的数量。
+
+    ```
+    \PhalApi\DI()->redis->ZCARD('runoobkey', 0);
+    ```
+
+  + **ZCOUNT** Redis Zcount 命令用于计算有序集合中指定分数区间的成员数量。
+
+    ```
+    \PhalApi\DI()->redis->ZCARD('runoobkey', 5, 10, 0);
+    ```
+
+  + **ZINCRBY **命令对有序集合中指定成员的分数加上增量
+
+    ```
+     \PhalApi\DI()->redis->ZINCRBY('myzset', 2, "one", 0);
+    ```
+
+  + **ZREM** Redis Zrem 命令用于移除有序集中的一个或多个成员，不存在的成员将被忽略。当 key 存在但不是有序集类型时，返回一个错误。
+
+    ```
+    \PhalApi\DI()->redis->ZREM(0, 'myzset', 'one', 'two', 'five');
+    ```
+    
+    
 
 + **计数器：**
 
@@ -276,39 +326,7 @@ $di->redis = function () {
     ```
     \PhalApi\DI()->redis->counter_forever($key, $tablename);
     ```
-
-+ **zset类型**
-
-  + **ZADD：** 向有序集合添加一个或多个成员，或者更新已存在成员的分数
-
-    ```
-    \PhalApi\DI()->redis->ZADD('runoobkey', 3,'mysql',  0);
-    ```
-
-  + **ZCARD：**Redis Zcard 命令用于计算集合中元素的数量。
-
-    ```
-    \PhalApi\DI()->redis->ZCARD('runoobkey', 0);
-    ```
-
-  + **ZCOUNT：**Redis Zcount 命令用于计算有序集合中指定分数区间的成员数量。
-
-    ```
-    \PhalApi\DI()->redis->ZCARD('runoobkey', 5, 10, 0);
-    ```
-
-  + **ZINCRBY：**命令对有序集合中指定成员的分数加上增量
-
-    ```
-     \PhalApi\DI()->redis->ZINCRBY('myzset', 2, "one", 0);
-    ```
-
-  + **ZREM：**Redis Zrem 命令用于移除有序集中的一个或多个成员，不存在的成员将被忽略。当 key 存在但不是有序集类型时，返回一个错误。
-
-    ```
-    \PhalApi\DI()->redis->ZREM(0, 'myzset', 'one', 'two', 'five');
-    ```
-
+    
     
 
 + **公用：**
