@@ -33,6 +33,17 @@ class Lite extends RedisCache {
         return call_user_func_array(array($this,$name),$arguments);
     }
 
+    /**
+     * @descr: 获取Redis实例，当封装的方法未能满足时，可调用此接口获取Reids实例进行操作
+     * @date: 2022/08/06 10:59
+     * @example         $getRedis =  \PhalApi\DI()->redis->getRedis();
+     * @example         $getRedis->select(1);
+     * @example         return $getRedis->set('key20220806', 'value20220806', 20000);
+     * @return bool
+     */
+    public function getRedis(){
+        return $this->redis;
+    }
     //---------------------------------------------------string类型-------------------------------------------------
     /**
      * @descr:将value 的值赋值给key,生存时间为永久 并根据名称自动切换库
