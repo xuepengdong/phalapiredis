@@ -238,8 +238,114 @@ $di->redis = function () {
     ```
     \PhalApi\DI()->redis->get_lTrim(键名,$start, $end, 库名);
     ```
-    
-    
+  
+  + **set_lRem**：移除列表中指定数量的指定值元素
+  
+    ```
+    \PhalApi\DI()->redis->set_lRem('mylist', 'value', 2, 1);
+    ```
+    备注：count > 0 从表头开始向表尾搜索；count < 0 从表尾开始向表头搜索；count = 0 移除所有匹配元素
+
+  + **set_lInsert**：在列表中指定元素的前面或后面插入新元素
+  
+    ```
+    \PhalApi\DI()->redis->set_lInsert('mylist', Redis::AFTER, 'pivot', 'newvalue', 1);
+    ```
+    备注：使用 Redis::BEFORE 或 Redis::AFTER 作为位置参数
+
+  + **set_rpoplpush**：将源列表的最后一个元素弹出并插入到目标列表头部
+  
+    ```
+    \PhalApi\DI()->redis->set_rpoplpush('srcList', 'dstList', 1);
+    ```
+
+  
++ **集合 Set**
+
+  + **set_sAdd**：向集合添加一个或多个成员
+
+    ```
+    \PhalApi\DI()->redis->set_sAdd('myset', 'member1', 'member2', 1);
+    ```
+
+  + **set_sRem**：移除集合中一个或多个成员
+
+    ```
+    \PhalApi\DI()->redis->set_sRem('myset', 'member1', 'member2', 1);
+    ```
+
+  + **get_sPop**：移除并返回集合中的一个随机元素
+
+    ```
+    \PhalApi\DI()->redis->get_sPop('myset', 1);
+    ```
+
+  + **get_sRandMember**：返回集合中一个或多个随机元素（不移除）
+
+    ```
+    \PhalApi\DI()->redis->get_sRandMember('myset', 3, 1);
+    ```
+
+  + **get_sIsMember**：判断指定成员是否是集合的成员
+
+    ```
+    \PhalApi\DI()->redis->get_sIsMember('myset', 'member1', 1);
+    ```
+
+  + **get_sCard**：获取集合的成员数量
+
+    ```
+    \PhalApi\DI()->redis->get_sCard('myset', 1);
+    ```
+
+  + **get_sMembers**：返回集合中的所有成员
+
+    ```
+    \PhalApi\DI()->redis->get_sMembers('myset', 1);
+    ```
+
+  + **get_sInter**：返回给定所有集合的交集
+
+    ```
+    \PhalApi\DI()->redis->get_sInter('set1', 'set2', 'set3', 1);
+    ```
+
+  + **set_sInterStore**：将给定所有集合的交集存储到目标集合
+
+    ```
+    \PhalApi\DI()->redis->set_sInterStore('destSet', 'set1', 'set2', 1);
+    ```
+
+  + **get_sUnion**：返回给定所有集合的并集
+
+    ```
+    \PhalApi\DI()->redis->get_sUnion('set1', 'set2', 'set3', 1);
+    ```
+
+  + **set_sUnionStore**：将给定所有集合的并集存储到目标集合
+
+    ```
+    \PhalApi\DI()->redis->set_sUnionStore('destSet', 'set1', 'set2', 1);
+    ```
+
+  + **get_sDiff**：返回第一个集合与其他集合之间的差集
+
+    ```
+    \PhalApi\DI()->redis->get_sDiff('set1', 'set2', 'set3', 1);
+    ```
+
+  + **set_sDiffStore**：将第一个集合与其他集合之间的差集存储到目标集合
+
+    ```
+    \PhalApi\DI()->redis->set_sDiffStore('destSet', 'set1', 'set2', 1);
+    ```
+
+  + **set_sMove**：将指定成员从源集合移动到目标集合
+
+    ```
+    \PhalApi\DI()->redis->set_sMove('srcSet', 'dstSet', 'member1', 1);
+    ```
+
   
 + **哈希 Hash **
 
@@ -316,9 +422,89 @@ $di->redis = function () {
     ```
     \PhalApi\DI()->redis->ZREM(0, 'myzset', 'one', 'two', 'five');
     ```
-    
-    
 
+  + **ZINTERSTORE** 计算给定有序集合的交集，并将结果存储到目标集合
+
+    ```
+    \PhalApi\DI()->redis->ZINTERSTORE('destKey', ['key1', 'key2'], [1, 2], 'SUM', 0);
+    ```
+    备注：aggregate 参数可选值：SUM, MIN, MAX
+
+  + **ZLEXCOUNT** 计算有序集合中指定字典区间内的成员数量
+
+    ```
+    \PhalApi\DI()->redis->ZLEXCOUNT('myzset', '-', '+', 0);
+    ```
+    备注：'-' 表示负无穷，'+' 表示正无穷
+
+  + **ZRANGE** 返回有序集合中指定索引区间内的成员
+
+    ```
+    \PhalApi\DI()->redis->ZRANGE('myzset', 0, -1, true, 0);
+    ```
+    备注：withscores 参数为 true 时返回分数
+
+  + **ZRANGEBYLEX** 返回有序集合中指定字典区间内的成员
+
+    ```
+    \PhalApi\DI()->redis->ZRANGEBYLEX('myzset', '[a', '[z', 0, 10, 0);
+    ```
+
+  + **ZRANGEBYSCORE** 返回有序集合中指定分数区间内的成员
+
+    ```
+    \PhalApi\DI()->redis->ZRANGEBYSCORE('myzset', 1, 10, ['WITHSCORES' => true], 0);
+    ```
+
+  + **ZRANK** 返回有序集合中指定成员的排名（按分数从小到大）
+
+    ```
+    \PhalApi\DI()->redis->ZRANK('myzset', 'member', 0);
+    ```
+
+  + **ZREMRANGEBYSCORE** 移除有序集合中指定分数区间内的所有成员
+
+    ```
+    \PhalApi\DI()->redis->ZREMRANGEBYSCORE('myzset', 1, 10, 0);
+    ```
+
+  + **ZREVRANGE** 返回有序集合中指定索引区间内的成员（按分数从大到小）
+
+    ```
+    \PhalApi\DI()->redis->ZREVRANGE('myzset', 0, -1, true, 0);
+    ```
+
+  + **ZREVRANGEBYSCORE** 返回有序集合中指定分数区间内的成员（按分数从大到小）
+
+    ```
+    \PhalApi\DI()->redis->ZREVRANGEBYSCORE('myzset', 10, 1, ['WITHSCORES' => true], 0);
+    ```
+
+  + **ZREVRANK** 返回有序集合中指定成员的排名（按分数从大到小）
+
+    ```
+    \PhalApi\DI()->redis->ZREVRANK('myzset', 'member', 0);
+    ```
+
+  + **ZSCORE** 返回有序集合中指定成员的分数
+
+    ```
+    \PhalApi\DI()->redis->ZSCORE('myzset', 'member', 0);
+    ```
+
+  + **ZUNIONSTORE** 计算给定有序集合的并集，并将结果存储到目标集合
+
+    ```
+    \PhalApi\DI()->redis->ZUNIONSTORE('destKey', ['key1', 'key2'], [1, 2], 'SUM', 0);
+    ```
+
+  + **ZSCAN** 迭代有序集合中的元素
+
+    ```
+    \PhalApi\DI()->redis->ZSCAN('myzset', $iterator, '*pattern*', 10, 0);
+    ```
+    
+    
 + **计数器：**
 
   + **counter_forever**永久计数器，回调当前计数：

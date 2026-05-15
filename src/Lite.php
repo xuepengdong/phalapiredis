@@ -405,8 +405,247 @@ class Lite extends RedisCache {
         return $rs;
     }
 
-    //未实现 lRem lInsert  rpoplpush
+    /**
+     * @descr:移除列表中指定数量的指定值元素。count > 0: 从表头开始向表尾搜索，移除count个匹配元素；count < 0: 从表尾开始向表头搜索，移除-count个匹配元素；count = 0: 移除所有匹配元素
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_lRem('mylist', 'value', 2, 1);
+     * @param $key
+     * @param $value
+     * @param int $count
+     * @return int 移除的元素数量
+     */
+    protected function set_lRem($key, $value, $count = 0){
+        return $this->redis->lRem($this->formatKey($key), $this->formatValue($value), $count);
+    }
+
+    /**
+     * @descr:在列表中指定元素的前面或后面插入新元素。当指定元素不存在于列表中时，操作无效。
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_lInsert('mylist', Redis::AFTER, 'pivot', 'newvalue', 1);
+     * @param $key
+     * @param $position Redis::BEFORE 或 Redis::AFTER
+     * @param $pivot 参考元素
+     * @param $value 要插入的值
+     * @return int 插入后列表的长度，或 -1 表示pivot不存在
+     */
+    protected function set_lInsert($key, $position, $pivot, $value){
+        return $this->redis->lInsert($this->formatKey($key), $position, $this->formatValue($pivot), $this->formatValue($value));
+    }
+
+    /**
+     * @descr:将列表srcKey的最后一个元素弹出，并将其插入到列表dstKey的头部。原子操作。
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_rpoplpush('srcList', 'dstList', 1);
+     * @param $srcKey 源列表
+     * @param $dstKey 目标列表
+     * @return mixed|null 被移动的元素值
+     */
+    protected function set_rpoplpush($srcKey, $dstKey){
+        $value = $this->redis->rpoplpush($this->formatKey($srcKey), $this->formatKey($dstKey));
+        return $value != FALSE ? $this->unformatValue($value) : NULL;
+    }
+
     //----------------------------------------------------set类型---------------------------------------------------
+    /**
+     * @descr:向集合添加一个或多个成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_sAdd('myset', 'member1', 'member2', 1);
+     * @param $key
+     * @param mixed ...$members 一个或多个成员
+     * @return int 添加成功的成员数量
+     */
+    protected function set_sAdd($key, ...$members){
+        return $this->redis->sAdd($this->formatKey($key), ...array_map([$this, 'formatValue'], $members));
+    }
+
+    /**
+     * @descr:移除集合中一个或多个成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_sRem('myset', 'member1', 'member2', 1);
+     * @param $key
+     * @param mixed ...$members 一个或多个成员
+     * @return int 移除成功的成员数量
+     */
+    protected function set_sRem($key, ...$members){
+        return $this->redis->sRem($this->formatKey($key), ...array_map([$this, 'formatValue'], $members));
+    }
+
+    /**
+     * @descr:移除并返回集合中的一个随机元素
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sPop('myset', 1);
+     * @param $key
+     * @return mixed|null 被弹出的元素，集合为空返回NULL
+     */
+    protected function get_sPop($key){
+        $value = $this->redis->sPop($this->formatKey($key));
+        return $value != FALSE ? $this->unformatValue($value) : NULL;
+    }
+
+    /**
+     * @descr:返回集合中一个或多个随机元素，不会移除元素
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sRandMember('myset', 3, 1);
+     * @param $key
+     * @param int|null $count 返回的元素数量，为NULL时返回单个元素
+     * @return mixed|null|array 单个元素或元素数组
+     */
+    protected function get_sRandMember($key, $count = null){
+        $value = $this->redis->sRandMember($this->formatKey($key), $count);
+        if(is_array($value)){
+            foreach($value as $k => $v){
+                $value[$k] = $this->unformatValue($v);
+            }
+        }else{
+            $value = $value != FALSE ? $this->unformatValue($value) : NULL;
+        }
+        return $value;
+    }
+
+    /**
+     * @descr:判断指定成员是否是集合的成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sIsMember('myset', 'member1', 1);
+     * @param $key
+     * @param $member 成员值
+     * @return bool true表示是成员，false表示不是
+     */
+    protected function get_sIsMember($key, $member){
+        return $this->redis->sIsMember($this->formatKey($key), $this->formatValue($member));
+    }
+
+    /**
+     * @descr:获取集合的成员数量
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sCard('myset', 1);
+     * @param $key
+     * @return int 集合的成员数量
+     */
+    protected function get_sCard($key){
+        return $this->redis->sCard($this->formatKey($key));
+    }
+
+    /**
+     * @descr:返回集合中的所有成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sMembers('myset', 1);
+     * @param $key
+     * @return array 集合成员数组
+     */
+    protected function get_sMembers($key){
+        $rs = $this->redis->sMembers($this->formatKey($key));
+        foreach($rs as $k => $v){
+            $rs[$k] = $this->unformatValue($v);
+        }
+        return $rs;
+    }
+
+    /**
+     * @descr:返回给定所有集合的交集
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sInter('set1', 'set2', 'set3', 1);
+     * @param mixed ...$keys 一个或多个集合键
+     * @return array 交集成员数组
+     */
+    protected function get_sInter(...$keys){
+        $formattedKeys = array_map([$this, 'formatKey'], $keys);
+        $rs = $this->redis->sInter(...$formattedKeys);
+        if(is_array($rs)){
+            foreach($rs as $k => $v){
+                $rs[$k] = $this->unformatValue($v);
+            }
+        }
+        return $rs;
+    }
+
+    /**
+     * @descr:将给定所有集合的交集存储到指定的目标集合中
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_sInterStore('destSet', 'set1', 'set2', 1);
+     * @param $destination 目标集合键
+     * @param mixed ...$keys 一个或多个集合键
+     * @return int 目标集合中的成员数量
+     */
+    protected function set_sInterStore($destination, ...$keys){
+        $formattedKeys = array_map([$this, 'formatKey'], $keys);
+        return $this->redis->sInterStore($this->formatKey($destination), ...$formattedKeys);
+    }
+
+    /**
+     * @descr:返回给定所有集合的并集
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sUnion('set1', 'set2', 'set3', 1);
+     * @param mixed ...$keys 一个或多个集合键
+     * @return array 并集成员数组
+     */
+    protected function get_sUnion(...$keys){
+        $formattedKeys = array_map([$this, 'formatKey'], $keys);
+        $rs = $this->redis->sUnion(...$formattedKeys);
+        if(is_array($rs)){
+            foreach($rs as $k => $v){
+                $rs[$k] = $this->unformatValue($v);
+            }
+        }
+        return $rs;
+    }
+
+    /**
+     * @descr:将给定所有集合的并集存储到指定的目标集合中
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_sUnionStore('destSet', 'set1', 'set2', 1);
+     * @param $destination 目标集合键
+     * @param mixed ...$keys 一个或多个集合键
+     * @return int 目标集合中的成员数量
+     */
+    protected function set_sUnionStore($destination, ...$keys){
+        $formattedKeys = array_map([$this, 'formatKey'], $keys);
+        return $this->redis->sUnionStore($this->formatKey($destination), ...$formattedKeys);
+    }
+
+    /**
+     * @descr:返回第一个集合与其他集合之间的差集
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->get_sDiff('set1', 'set2', 'set3', 1);
+     * @param mixed ...$keys 一个或多个集合键，第一个是源集合
+     * @return array 差集成员数组
+     */
+    protected function get_sDiff(...$keys){
+        $formattedKeys = array_map([$this, 'formatKey'], $keys);
+        $rs = $this->redis->sDiff(...$formattedKeys);
+        if(is_array($rs)){
+            foreach($rs as $k => $v){
+                $rs[$k] = $this->unformatValue($v);
+            }
+        }
+        return $rs;
+    }
+
+    /**
+     * @descr:将第一个集合与其他集合之间的差集存储到指定的目标集合中
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_sDiffStore('destSet', 'set1', 'set2', 1);
+     * @param $destination 目标集合键
+     * @param mixed ...$keys 一个或多个集合键，第一个是源集合
+     * @return int 目标集合中的成员数量
+     */
+    protected function set_sDiffStore($destination, ...$keys){
+        $formattedKeys = array_map([$this, 'formatKey'], $keys);
+        return $this->redis->sDiffStore($this->formatKey($destination), ...$formattedKeys);
+    }
+
+    /**
+     * @descr:将指定成员从源集合移动到目标集合
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->set_sMove('srcSet', 'dstSet', 'member1', 1);
+     * @param $srcKey 源集合键
+     * @param $dstKey 目标集合键
+     * @param $member 要移动的成员
+     * @return bool true表示移动成功，false表示成员不存在于源集合
+     */
+    protected function set_sMove($srcKey, $dstKey, $member){
+        return $this->redis->sMove($this->formatKey($srcKey), $this->formatKey($dstKey), $this->formatValue($member));
+    }
+
     //----------------------------------------------------zset类型---------------------------------------------------
     /**
      * @descr:向有序集合添加一个或多个成员，或者更新已存在成员的分数  ZADD KEY_NAME SCORE1 VALUE1.. SCOREN VALUEN
@@ -453,11 +692,7 @@ class Lite extends RedisCache {
     }
 
     /**
-     * @descr: Redis Zincrby 命令对有序集合中指定成员的分数加上增量 increment
-    可以通过传递一个负数值 increment ，让分数减去相应的值，比如 ZINCRBY key -5 member ，就是让 member 的 score 值减去 5 。
-    当 key 不存在，或分数不是 key 的成员时， ZINCRBY key increment member 等同于 ZADD key increment member 。
-    当 key 不是有序集类型时，返回一个错误。
-    分数值可以是整数值或双精度浮点数。
+     * @descr: Redis Zincrby
      * @date: 2022/08/05 13:59
      * @example \PhalApi\DI()->redis->ZINCRBY('myzset', 2, "one", 0);
      * @param $key
@@ -485,21 +720,206 @@ class Lite extends RedisCache {
         return $this->redis->zRem($key, $member1, ...$otherMembers);
     }
 
-    //ZINTERSTORE destination numkeys key [key ...]  待做
-    //ZLEXCOUNT key min max待做
-    //ZRANGE key start stop [WITHSCORES]待做
-    //ZRANGEBYLEX key min max [LIMIT offset count]待做
-    //ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]待做
-    //ZRANK key member待做
-    //	ZREMRANGEBYSCORE key min max待做
-    //ZREVRANGE key start stop [WITHSCORES]待做
-    //ZREVRANGEBYSCORE key max min [WITHSCORES]待做
-    //	ZREVRANK key member待做
-    //ZSCORE key member待做
-    //ZUNIONSTORE destination numkeys key [key ...]待做
-    //	ZSCAN key cursor [MATCH pattern] [COUNT count]待做
+    /**
+     * @descr:计算给定有序集合的交集，并将结果存储到目标集合中
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZINTERSTORE('destKey', ['key1', 'key2'], [1, 2], 'SUM', 0);
+     * @param $destination 目标集合键
+     * @param $keys 有序集合键数组
+     * @param array $weights 权重数组
+     * @param string $aggregate 聚合函数: SUM, MIN, MAX
+     * @param $talbename 数据库名或索引
+     * @return int 目标集合中的成员数量
+     */
+    public function ZINTERSTORE($destination, $keys, $weights = [], $aggregate = 'SUM', $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zInterStore($destination, $keys, $weights, $aggregate);
+    }
 
+    /**
+     * @descr:计算有序集合中指定字典区间内的成员数量
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZLEXCOUNT('myzset', '-', '+', 0);
+     * @param $key
+     * @param $min 最小字典值，'-'表示负无穷，'+'表示正无穷
+     * @param $max 最大字典值
+     * @param $talbename 数据库名或索引
+     * @return int 成员数量
+     */
+    public function ZLEXCOUNT($key, $min, $max, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zLexCount($key, $min, $max);
+    }
 
+    /**
+     * @descr:返回有序集合中指定索引区间内的成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZRANGE('myzset', 0, -1, true, 0);
+     * @param $key
+     * @param $start 起始索引
+     * @param $end 结束索引，-1表示最后一个
+     * @param bool $withscores 是否返回分数
+     * @param $talbename 数据库名或索引
+     * @return array 成员数组或成员-分数关联数组
+     */
+    public function ZRANGE($key, $start, $end, $withscores = false, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRange($key, $start, $end, $withscores);
+    }
+
+    /**
+     * @descr:返回有序集合中指定字典区间内的成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZRANGEBYLEX('myzset', '[a', '[z', 0, 10, 0);
+     * @param $key
+     * @param $min 最小字典值
+     * @param $max 最大字典值
+     * @param int|null $offset 偏移量
+     * @param int|null $limit 返回数量限制
+     * @param $talbename 数据库名或索引
+     * @return array 成员数组
+     */
+    public function ZRANGEBYLEX($key, $min, $max, $offset = null, $limit = null, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRangeByLex($key, $min, $max, $offset, $limit);
+    }
+
+    /**
+     * @descr:返回有序集合中指定分数区间内的成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZRANGEBYSCORE('myzset', 1, 10, ['WITHSCORES' => true], 0);
+     * @param $key
+     * @param $min 最小分数
+     * @param $max 最大分数
+     * @param array $options 选项数组，如 ['WITHSCORES' => true, 'LIMIT' => [0, 10]]
+     * @param $talbename 数据库名或索引
+     * @return array 成员数组或成员-分数关联数组
+     */
+    public function ZRANGEBYSCORE($key, $min, $max, $options = [], $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRangeByScore($key, $min, $max, $options);
+    }
+
+    /**
+     * @descr:返回有序集合中指定成员的排名（按分数从小到大）
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZRANK('myzset', 'member', 0);
+     * @param $key
+     * @param $member 成员值
+     * @param $talbename 数据库名或索引
+     * @return int|null 排名（从0开始），不存在返回NULL
+     */
+    public function ZRANK($key, $member, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRank($key, $member);
+    }
+
+    /**
+     * @descr:移除有序集合中指定分数区间内的所有成员
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZREMRANGEBYSCORE('myzset', 1, 10, 0);
+     * @param $key
+     * @param $min 最小分数
+     * @param $max 最大分数
+     * @param $talbename 数据库名或索引
+     * @return int 移除的成员数量
+     */
+    public function ZREMRANGEBYSCORE($key, $min, $max, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRemRangeByScore($key, $min, $max);
+    }
+
+    /**
+     * @descr:返回有序集合中指定索引区间内的成员（按分数从大到小）
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZREVRANGE('myzset', 0, -1, true, 0);
+     * @param $key
+     * @param $start 起始索引
+     * @param $end 结束索引，-1表示最后一个
+     * @param bool $withscores 是否返回分数
+     * @param $talbename 数据库名或索引
+     * @return array 成员数组或成员-分数关联数组
+     */
+    public function ZREVRANGE($key, $start, $end, $withscores = false, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRevRange($key, $start, $end, $withscores);
+    }
+
+    /**
+     * @descr:返回有序集合中指定分数区间内的成员（按分数从大到小）
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZREVRANGEBYSCORE('myzset', 10, 1, ['WITHSCORES' => true], 0);
+     * @param $key
+     * @param $max 最大分数
+     * @param $min 最小分数
+     * @param array $options 选项数组
+     * @param $talbename 数据库名或索引
+     * @return array 成员数组或成员-分数关联数组
+     */
+    public function ZREVRANGEBYSCORE($key, $max, $min, $options = [], $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRevRangeByScore($key, $max, $min, $options);
+    }
+
+    /**
+     * @descr:返回有序集合中指定成员的排名（按分数从大到小）
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZREVRANK('myzset', 'member', 0);
+     * @param $key
+     * @param $member 成员值
+     * @param $talbename 数据库名或索引
+     * @return int|null 排名（从0开始），不存在返回NULL
+     */
+    public function ZREVRANK($key, $member, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zRevRank($key, $member);
+    }
+
+    /**
+     * @descr:返回有序集合中指定成员的分数
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZSCORE('myzset', 'member', 0);
+     * @param $key
+     * @param $member 成员值
+     * @param $talbename 数据库名或索引
+     * @return float|null 分数值，不存在返回NULL
+     */
+    public function ZSCORE($key, $member, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zScore($key, $member);
+    }
+
+    /**
+     * @descr:计算给定有序集合的并集，并将结果存储到目标集合中
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZUNIONSTORE('destKey', ['key1', 'key2'], [1, 2], 'SUM', 0);
+     * @param $destination 目标集合键
+     * @param $keys 有序集合键数组
+     * @param array $weights 权重数组
+     * @param string $aggregate 聚合函数: SUM, MIN, MAX
+     * @param $talbename 数据库名或索引
+     * @return int 目标集合中的成员数量
+     */
+    public function ZUNIONSTORE($destination, $keys, $weights = [], $aggregate = 'SUM', $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zUnionStore($destination, $keys, $weights, $aggregate);
+    }
+
+    /**
+     * @descr:迭代有序集合中的元素
+     * @date: 2024/01/01
+     * @example \PhalApi\DI()->redis->ZSCAN('myzset', $iterator, '*pattern*', 10, 0);
+     * @param $key
+     * @param int &$iterator 迭代器，第一次调用传0
+     * @param string|null $pattern 匹配模式
+     * @param int|null $count 返回数量提示
+     * @param $talbename 数据库名或索引
+     * @return array [元素数组, 下一个迭代器]
+     */
+    public function ZSCAN($key, &$iterator, $pattern = null, $count = null, $talbename){
+        $this->redis->select($talbename);
+        return $this->redis->zScan($key, $iterator, $pattern, $count);
+    }
 
     //----------------------------------------------------Hash类型---------------------------------------------------
     /**
@@ -516,13 +936,13 @@ class Lite extends RedisCache {
         $i = 0;
         if(is_array($field)){
             foreach($field as $hashkey){
-                $hashDelState = $this->redis->HDEL($key, $hashkey);
+                $hashDelState = $this->redis->HDEL($this->formatKey($key), $hashkey);
                 if($hashDelState){
                     $i++;
                 }
             }
         }else{
-            $i = $this->redis->HDEL($key, $field);
+            $i = $this->redis->HDEL($this->formatKey($key), $field);
         }
         return $i;
     }
@@ -537,7 +957,7 @@ class Lite extends RedisCache {
      */
     public function HGETALL($key, $talbename){
         $this->redis->select($talbename);
-        $array =  $this->redis->HGETALL($key);
+        $array =  $this->redis->HGETALL($this->formatKey($key));
         if(is_array($array) && !empty($array)){
             foreach($array as $key=> $value){
                 $array[$key] = json_decode($value, true);
@@ -558,7 +978,7 @@ class Lite extends RedisCache {
      */
     public function HSET ($key, $field, $value, $talbename){
         $this->redis->select($talbename);
-        return $this->redis->HSET ($key, $field, json_encode($value));
+        return $this->redis->HSET ($this->formatKey($key), $field, json_encode($value));
     }
 
     /**
@@ -572,7 +992,7 @@ class Lite extends RedisCache {
      */
     public function HEXISTS ($key, $field, $talbename){
         $this->redis->select($talbename);
-        return $this->redis->HEXISTS ($key, $field);
+        return $this->redis->HEXISTS ($this->formatKey($key), $field);
     }
 
     /**
@@ -587,10 +1007,10 @@ class Lite extends RedisCache {
     public function HMGET ($key, $field, $talbename){
         $this->redis->select($talbename);
         if(is_array($field)){
-            $return_field = $this->redis->HMGET ($key, $field);
+            $return_field = $this->redis->HMGET ($this->formatKey($key), $field);
         }else{
             $fieldArray[] = $field;
-            $return_field = $this->redis->HMGET ($key, $fieldArray);
+            $return_field = $this->redis->HMGET ($this->formatKey($key), $fieldArray);
         }
         foreach ($return_field as $key => $value){
             $return_field[$key] = json_decode($value, true);
@@ -609,7 +1029,7 @@ class Lite extends RedisCache {
      */
     public function HGET($key, $field, $talbename){
         $this->redis->select($talbename);
-        return json_decode($this->redis->HGET($key, $field));
+        return json_decode($this->redis->HGET($this->formatKey($key), $field));
     }
     //----------------------------------------------------通用方法---------------------------------------------------
 
